@@ -1,2 +1,2 @@
 # flink-deployer
-flink部署器，支持flink on yarn/k8s
+基于Flink自带的flink-yarn和flink-kubernetes封装的一套Flink任务部署器,支持SDK化的任务生命周期管理，使用方可以配合一个配置服务器对其进行封装从而完成可视化的Flink任务部署监控平台。
