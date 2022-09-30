@@ -17,6 +17,7 @@
         <scala.binary.version>2.11</scala.binary.version>
         <flink.version>1.15.1</flink.version>
         <hadoop.version>3.0.0</hadoop.version>
+        <lombok.version>1.18.24</lombok.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -49,6 +50,11 @@
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-hdfs</artifactId>
                 <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
