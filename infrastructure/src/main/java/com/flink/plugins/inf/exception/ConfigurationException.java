@@ -7,7 +7,12 @@ package com.flink.plugins.inf.exception;
  * @date: 2022/9/30 3:42 PM
  */
 public class ConfigurationException extends BaseException {
+
     public ConfigurationException(ExceptionEnums exceptionEnums) {
         super(exceptionEnums);
+    }
+
+    public ConfigurationException(String msg){
+        super(msg);
     }
 }

@@ -9,10 +9,17 @@ import lombok.ToString;
  * @date: 2022/9/30 4:12 PM
  */
 @ToString
-public abstract class BaseException extends RuntimeException {
-    private ExceptionEnums exceptionEnums;
+public class BaseException extends RuntimeException {
+
+    public BaseException(String errorMsg) {
+        super(errorMsg);
+    }
+
+    public BaseException(String errorMsg, Throwable originalException) {
+        super(errorMsg, originalException);
+    }
 
     public BaseException(ExceptionEnums exceptionEnums) {
-        this.exceptionEnums = exceptionEnums;
+        super(exceptionEnums.getMsg());
     }
 }
