@@ -1,4 +1,4 @@
-package com.flink.plugins.inf.descriptor;
+package com.flink.plugins.inf.deployer;
 
 /**
  * @fileName: KubernetesClusterDeployer.java

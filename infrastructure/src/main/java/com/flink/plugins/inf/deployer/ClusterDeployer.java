@@ -1,4 +1,6 @@
-package com.flink.plugins.inf.descriptor;
+package com.flink.plugins.inf.deployer;
+
+import org.apache.flink.client.deployment.ClusterDescriptor;
 
 /**
  * @fileName: ClusterDeployer.java
@@ -14,5 +16,5 @@ public interface ClusterDeployer<ClusterType, Config> {
      * @param clusterConfig clusterDescriptor所需配置
      * @return clusterDescriptor基础类
      */
-    abstract org.apache.flink.client.deployment.ClusterDescriptor<ClusterType> buildClusterDescriptor(Config clusterConfig);
+    abstract ClusterDescriptor<ClusterType> buildClusterDescriptor(Config clusterConfig);
 }

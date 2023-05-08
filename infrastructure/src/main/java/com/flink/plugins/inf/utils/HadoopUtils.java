@@ -2,11 +2,10 @@ package com.flink.plugins.inf.utils;
 
 import com.flink.plugins.inf.exception.ConfigurationException;
 import com.flink.plugins.inf.exception.ExceptionEnums;
-import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @fileName: HadoopUtils.java
@@ -15,7 +14,6 @@ import java.util.Set;
  * @date: 2022/9/30 3:34 PM
  */
 public class HadoopUtils {
-    private final static Set<String> HADOOP_CONFIG_NAME_LIST = Sets.newHashSet("hdfs-site", "core-site", "yarn-site");
 
     /**
      * 校验hadoop配置合法性
@@ -28,7 +26,7 @@ public class HadoopUtils {
                 if (!hadoopConfigPath.endsWith(".xml")) {
                     throw new ConfigurationException(ExceptionEnums.CONFIG_ERROR_SUFFIX);
                 }
-                if (!HADOOP_CONFIG_NAME_LIST.contains(hadoopConfigPath)) {
+                if (!StringUtils.containsAny(hadoopConfigPath, "hdfs-site", "core-site", "yarn-site")) {
                     throw new ConfigurationException(ExceptionEnums.CONFIG_NOT_SUPPORT);
                 }
             }

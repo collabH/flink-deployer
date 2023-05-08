@@ -2,10 +2,10 @@ package com.flink.plugins.inf.config;
 
 import com.flink.plugins.inf.utils.ConfigValidateUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.flink.configuration.CheckpointingOptions;
+import org.apache.flink.configuration.Configuration;
 
 import java.util.Properties;
 
@@ -18,12 +18,8 @@ import java.util.Properties;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class CheckpointConfig {
-    /**
-     * checkpoint存储路径
-     */
-    private String checkpointStorage;
+
     /**
      * savepoint存储目录
      */
@@ -32,6 +28,10 @@ public class CheckpointConfig {
      * checkpoint存储目录
      */
     private String checkpointDirectory;
+    /**
+     * state存储介质，jobmanager、filesystem
+     */
+    private String checkpointStorage;
     /**
      * checkpoint保留的个数，默认为1
      */
@@ -50,18 +50,18 @@ public class CheckpointConfig {
     /**
      * 构建ck配置
      *
-     * @param dynamicProperties flink动态配置
+     * @param dynamicFlinkConf flink动态配置
      */
-    public void buildCheckpointProperties(Properties dynamicProperties) {
-        dynamicProperties.put(CheckpointingOptions.MAX_RETAINED_CHECKPOINTS.key(), this.checkpointsNumRetained);
-        dynamicProperties.put(CheckpointingOptions.INCREMENTAL_CHECKPOINTS.key(), this.incrementalCheckpoints);
-        dynamicProperties.put(CheckpointingOptions.LOCAL_RECOVERY.key(), this.localRecovery);
+    public void buildCheckpointProperties(Configuration dynamicFlinkConf) {
+        dynamicFlinkConf.set(CheckpointingOptions.MAX_RETAINED_CHECKPOINTS, this.checkpointsNumRetained);
+        dynamicFlinkConf.set(CheckpointingOptions.INCREMENTAL_CHECKPOINTS, this.incrementalCheckpoints);
+        dynamicFlinkConf.set(CheckpointingOptions.LOCAL_RECOVERY, this.localRecovery);
         ConfigValidateUtils.stringConfigValid(CheckpointingOptions.CHECKPOINT_STORAGE.key(), this.checkpointStorage,
-                dynamicProperties);
+                dynamicFlinkConf);
         ConfigValidateUtils.stringConfigValid(CheckpointingOptions.CHECKPOINTS_DIRECTORY.key(),
                 this.checkpointDirectory,
-                dynamicProperties);
+                dynamicFlinkConf);
         ConfigValidateUtils.stringConfigValid(CheckpointingOptions.SAVEPOINT_DIRECTORY.key(), this.savepointDirectory,
-                dynamicProperties);
+                dynamicFlinkConf);
     }
 }
