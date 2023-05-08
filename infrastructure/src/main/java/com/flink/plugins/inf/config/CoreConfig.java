@@ -2,12 +2,10 @@ package com.flink.plugins.inf.config;
 
 import com.flink.plugins.inf.utils.ConfigValidateUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.CoreOptions;
-
-import java.util.Properties;
 
 /**
  * @fileName: CoreConfig.java
@@ -15,10 +13,9 @@ import java.util.Properties;
  * @author: huangshimin
  * @date: 2023/4/28 15:07
  */
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Data
 public class CoreConfig {
     /**
      * 默认并行度，默认为1
@@ -56,19 +53,20 @@ public class CoreConfig {
 
     /**
      * 构建core配置
-     * @param dynamicProperties flink动态配置
+     *
+     * @param dynamicFlinkConf flink动态配置
      */
-    public void buildCoreProperties(Properties dynamicProperties) {
-        dynamicProperties.put(CoreOptions.DEFAULT_FILESYSTEM_SCHEME.key(), this.defaultParallelism);
-        dynamicProperties.put(CoreOptions.FLINK_JVM_OPTIONS.key(), this.JvmOptions);
-        dynamicProperties.put(CoreOptions.FLINK_JM_JVM_OPTIONS.key(), this.jmJvmOptions);
-        dynamicProperties.put(CoreOptions.FLINK_TM_JVM_OPTIONS.key(), this.tmJvmOptions);
-        dynamicProperties.put(CoreOptions.FLINK_CLI_JVM_OPTIONS.key(), this.cliJvmOptions);
+    public void buildCoreProperties(Configuration dynamicFlinkConf) {
+        dynamicFlinkConf.set(CoreOptions.DEFAULT_PARALLELISM, this.defaultParallelism);
+        dynamicFlinkConf.set(CoreOptions.FLINK_JVM_OPTIONS, this.JvmOptions);
+        dynamicFlinkConf.set(CoreOptions.FLINK_JM_JVM_OPTIONS, this.jmJvmOptions);
+        dynamicFlinkConf.set(CoreOptions.FLINK_TM_JVM_OPTIONS, this.tmJvmOptions);
+        dynamicFlinkConf.set(CoreOptions.FLINK_CLI_JVM_OPTIONS, this.cliJvmOptions);
         ConfigValidateUtils.stringConfigValid(CoreOptions.FLINK_HADOOP_CONF_DIR.key(), this.hadoopConfDir,
-                dynamicProperties);
+                dynamicFlinkConf);
         ConfigValidateUtils.stringConfigValid(CoreOptions.FLINK_HADOOP_CONF_DIR.key(),
                 this.hbaseConfDir,
-                dynamicProperties);
+                dynamicFlinkConf);
     }
 
 }

@@ -2,9 +2,9 @@ package com.flink.plugins.inf.config;
 
 import com.flink.plugins.inf.utils.ConfigValidateUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.MemorySize;
 import org.apache.flink.configuration.TaskManagerOptions;
 
@@ -20,7 +20,6 @@ import java.util.Properties;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class TaskManagerConfig {
     /**
      * 每个taskmanager slot个数，默认为1
@@ -71,7 +70,7 @@ public class TaskManagerConfig {
      */
     private Long networkMinMemoryMb;
     private Long networkMaxMemoryMb;
-    private Long networkMemoryFraction;
+    private Float networkMemoryFraction;
     /**
      * taskManager jvmOverhead大小配置，max、min/fraction只能选其一
      */
@@ -110,57 +109,57 @@ public class TaskManagerConfig {
     /**
      * 构建taskManager配置
      *
-     * @param dynamicProperties flink动态配置
+     * @param dynamicFlinkConf flink动态配置
      */
-    public void buildTaskManagerProperties(Properties dynamicProperties) {
-        dynamicProperties.put(TaskManagerOptions.NUM_TASK_SLOTS.key(), this.numTaskSlot);
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.CPU_CORES.key(), this.cpuCores,
-                dynamicProperties);
+    public void buildTaskManagerProperties(Configuration dynamicFlinkConf) {
+        dynamicFlinkConf.set(TaskManagerOptions.NUM_TASK_SLOTS, this.numTaskSlot);
+        ConfigValidateUtils.objConfigValid(TaskManagerOptions.CPU_CORES, this.cpuCores,
+                dynamicFlinkConf);
         // process、flink
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.TOTAL_PROCESS_MEMORY.key(),
-                MemorySize.ofMebiBytes(this.totalProcessMemoryMb), dynamicProperties);
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.TOTAL_FLINK_MEMORY.key(),
-                MemorySize.ofMebiBytes(this.totalFlinkMemoryMb), dynamicProperties);
+        ConfigValidateUtils.memorySizeValid(TaskManagerOptions.TOTAL_PROCESS_MEMORY,
+                this.totalProcessMemoryMb, dynamicFlinkConf);
+        ConfigValidateUtils.memorySizeValid(TaskManagerOptions.TOTAL_FLINK_MEMORY,
+                this.totalFlinkMemoryMb, dynamicFlinkConf);
         // framework
-        dynamicProperties.put(TaskManagerOptions.FRAMEWORK_HEAP_MEMORY.key(),
+        dynamicFlinkConf.set(TaskManagerOptions.FRAMEWORK_HEAP_MEMORY,
                 MemorySize.ofMebiBytes(this.frameworkHeapMemoryMb));
-        dynamicProperties.put(TaskManagerOptions.FRAMEWORK_OFF_HEAP_MEMORY.key(),
+        dynamicFlinkConf.set(TaskManagerOptions.FRAMEWORK_OFF_HEAP_MEMORY,
                 MemorySize.ofMebiBytes(this.frameworkOffHeapMemoryMb));
         // task
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.TASK_HEAP_MEMORY.key(),
-                MemorySize.ofMebiBytes(this.taskHeapMemoryMb), dynamicProperties);
-        dynamicProperties.put(TaskManagerOptions.TASK_OFF_HEAP_MEMORY.key(),
+        ConfigValidateUtils.memorySizeValid(TaskManagerOptions.TASK_HEAP_MEMORY,
+                this.taskHeapMemoryMb, dynamicFlinkConf);
+        dynamicFlinkConf.set(TaskManagerOptions.TASK_OFF_HEAP_MEMORY,
                 MemorySize.ofMebiBytes(this.taskOffHeapMemoryMb));
         // managed memory
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.MANAGED_MEMORY_SIZE.key(),
-                MemorySize.ofMebiBytes(this.managedMemorySizeMb), dynamicProperties);
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.MANAGED_MEMORY_FRACTION.key(),
-                this.managedMemoryFraction, dynamicProperties);
+        ConfigValidateUtils.memorySizeValid(TaskManagerOptions.MANAGED_MEMORY_SIZE,
+                this.managedMemorySizeMb, dynamicFlinkConf);
+        ConfigValidateUtils.objConfigValid(TaskManagerOptions.MANAGED_MEMORY_FRACTION,
+                this.managedMemoryFraction, dynamicFlinkConf);
         // metaspace
-        dynamicProperties.put(TaskManagerOptions.JVM_METASPACE.key(),
+        dynamicFlinkConf.set(TaskManagerOptions.JVM_METASPACE,
                 MemorySize.ofMebiBytes(this.jvmMetaspaceMemoryMb));
         // network
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.NETWORK_MEMORY_MAX.key(),
-                MemorySize.ofMebiBytes(this.networkMaxMemoryMb), dynamicProperties);
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.NETWORK_MEMORY_MIN.key(),
-                MemorySize.ofMebiBytes(this.networkMinMemoryMb), dynamicProperties);
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.NETWORK_MEMORY_FRACTION.key(),
-                this.networkMemoryFraction, dynamicProperties);
+        ConfigValidateUtils.memorySizeValid(TaskManagerOptions.NETWORK_MEMORY_MAX,
+                this.networkMaxMemoryMb, dynamicFlinkConf);
+        ConfigValidateUtils.memorySizeValid(TaskManagerOptions.NETWORK_MEMORY_MIN,
+                this.networkMinMemoryMb, dynamicFlinkConf);
+        ConfigValidateUtils.objConfigValid(TaskManagerOptions.NETWORK_MEMORY_FRACTION,
+                this.networkMemoryFraction, dynamicFlinkConf);
         // jvm-overhead
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.JVM_OVERHEAD_MAX.key(),
-                MemorySize.ofMebiBytes(this.jvmOverheadMaxMemoryMb), dynamicProperties);
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.JVM_OVERHEAD_MIN.key(),
-                MemorySize.ofMebiBytes(this.jvmOverheadMinMemoryMb), dynamicProperties);
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.JVM_OVERHEAD_FRACTION.key(),
-                this.jvmOverheadFraction, dynamicProperties);
+        ConfigValidateUtils.memorySizeValid(TaskManagerOptions.JVM_OVERHEAD_MAX,
+                this.jvmOverheadMaxMemoryMb, dynamicFlinkConf);
+        ConfigValidateUtils.memorySizeValid(TaskManagerOptions.JVM_OVERHEAD_MIN,
+                this.jvmOverheadMinMemoryMb, dynamicFlinkConf);
+        ConfigValidateUtils.objConfigValid(TaskManagerOptions.JVM_OVERHEAD_FRACTION,
+                this.jvmOverheadFraction, dynamicFlinkConf);
         // host
-        ConfigValidateUtils.stringConfigValid(TaskManagerOptions.HOST.key(), this.host, dynamicProperties);
-        dynamicProperties.put(TaskManagerOptions.BIND_HOST.key(), this.bindHost);
-        dynamicProperties.put(TaskManagerOptions.RPC_PORT.key(), this.rpcPort);
-        ConfigValidateUtils.objConfigValid(TaskManagerOptions.RPC_BIND_PORT.key(), this.rpcBindPort, dynamicProperties);
-        dynamicProperties.put(TaskManagerOptions.REGISTRATION_TIMEOUT.key(),
+        ConfigValidateUtils.stringConfigValid(TaskManagerOptions.HOST.key(), this.host, dynamicFlinkConf);
+        dynamicFlinkConf.set(TaskManagerOptions.BIND_HOST, this.bindHost);
+        dynamicFlinkConf.set(TaskManagerOptions.RPC_PORT, this.rpcPort);
+        ConfigValidateUtils.objConfigValid(TaskManagerOptions.RPC_BIND_PORT, this.rpcBindPort, dynamicFlinkConf);
+        dynamicFlinkConf.set(TaskManagerOptions.REGISTRATION_TIMEOUT,
                 Duration.ofSeconds(this.registrationTimeoutSecond));
-        dynamicProperties.put(TaskManagerOptions.SLOT_TIMEOUT.key(),
+        dynamicFlinkConf.set(TaskManagerOptions.SLOT_TIMEOUT,
                 Duration.ofSeconds(this.slotTimeoutSecond));
 
     }

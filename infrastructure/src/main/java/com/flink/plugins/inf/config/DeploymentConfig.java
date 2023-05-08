@@ -1,10 +1,11 @@
 package com.flink.plugins.inf.config;
 
+import com.flink.plugins.inf.constants.TargetTypeEnums;
 import com.flink.plugins.inf.utils.ConfigValidateUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.DeploymentOptions;
 
 import java.util.List;
@@ -19,13 +20,12 @@ import java.util.Properties;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class DeploymentConfig {
     /**
      * flink部署方式，支持remote、local、yarn-per-job (deprecated)、yarn-session、kubernetes-session、yarn-application
      * kubernetes-application, 默认为yarn-application
      */
-    private String executionTarget = "yarn-application";
+    private String executionTarget = TargetTypeEnums.YARN_APPLICATION.getTarget();
 
     /**
      * 启动方式是否后台方式，日志不会打印在client上，默认为false
@@ -40,13 +40,13 @@ public class DeploymentConfig {
     /**
      * 构建deployment配置
      *
-     * @param dynamicProperties flink动态配置
+     * @param dynamicFlinkConf flink动态配置
      */
-    public void buildCheckpointProperties(Properties dynamicProperties) {
-        dynamicProperties.put(DeploymentOptions.TARGET.key(), this.executionTarget);
-        dynamicProperties.put(DeploymentOptions.ATTACHED.key(), this.executionAttached);
-        ConfigValidateUtils.listConfigValid(DeploymentOptions.JOB_LISTENERS.key(), this.executionJobListeners,
-                dynamicProperties);
+    public void buildDeploymentProperties(Configuration dynamicFlinkConf) {
+        dynamicFlinkConf.set(DeploymentOptions.TARGET, this.executionTarget);
+        dynamicFlinkConf.set(DeploymentOptions.ATTACHED, this.executionAttached);
+        ConfigValidateUtils.listConfigValid(DeploymentOptions.JOB_LISTENERS, this.executionJobListeners,
+                dynamicFlinkConf);
     }
 
 }

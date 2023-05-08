@@ -22,6 +22,10 @@ public class RuntimeConfig {
      */
     private CoreConfig coreConfig;
     /**
+     * 任务配置
+     */
+    private PipelineConfig jobConfig;
+    /**
      * jobManager配置
      */
     private JobManagerConfig jobManagerConfig;

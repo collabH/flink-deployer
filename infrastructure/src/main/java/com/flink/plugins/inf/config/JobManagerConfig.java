@@ -2,9 +2,9 @@ package com.flink.plugins.inf.config;
 
 import com.flink.plugins.inf.utils.ConfigValidateUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.JobManagerOptions;
 import org.apache.flink.configuration.MemorySize;
 
@@ -19,7 +19,6 @@ import java.util.Properties;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class JobManagerConfig {
     /**
      * jobManager总内存设置，单位mb
@@ -70,32 +69,32 @@ public class JobManagerConfig {
     /**
      * 构建jobManager配置
      *
-     * @param dynamicProperties flink动态配置
+     * @param dynamicFlinkConf flink动态配置
      */
-    public void buildJobManagerProperties(Properties dynamicProperties) {
-        ConfigValidateUtils.objConfigValid(JobManagerOptions.TOTAL_PROCESS_MEMORY.key(),
-                MemorySize.ofMebiBytes(this.totalProcessMemoryMb), dynamicProperties);
-        ConfigValidateUtils.objConfigValid(JobManagerOptions.TOTAL_FLINK_MEMORY.key(),
-                MemorySize.ofMebiBytes(this.totalFlinkMemoryMb), dynamicProperties);
+    public void buildJobManagerProperties(Configuration dynamicFlinkConf) {
+        ConfigValidateUtils.memorySizeValid(JobManagerOptions.TOTAL_PROCESS_MEMORY,
+                this.totalProcessMemoryMb, dynamicFlinkConf);
+        ConfigValidateUtils.memorySizeValid(JobManagerOptions.TOTAL_FLINK_MEMORY,
+                this.totalFlinkMemoryMb, dynamicFlinkConf);
         // jvm
-        ConfigValidateUtils.objConfigValid(JobManagerOptions.JVM_HEAP_MEMORY.key(),
-                MemorySize.ofMebiBytes(this.jvmHeapMemoryMb), dynamicProperties);
-        dynamicProperties.put(JobManagerOptions.OFF_HEAP_MEMORY.key(), this.jvmOffHeapMemoryMb);
+        ConfigValidateUtils.memorySizeValid(JobManagerOptions.JVM_HEAP_MEMORY,
+                this.jvmHeapMemoryMb, dynamicFlinkConf);
+        dynamicFlinkConf.set(JobManagerOptions.OFF_HEAP_MEMORY, MemorySize.ofMebiBytes(this.jvmOffHeapMemoryMb));
         // metaspace
-        dynamicProperties.put(JobManagerOptions.JVM_METASPACE.key(), this.jvmMetaspaceMemoryMb);
+        dynamicFlinkConf.set(JobManagerOptions.JVM_METASPACE, MemorySize.ofMebiBytes(this.jvmMetaspaceMemoryMb));
         // jvm-overhead
-        ConfigValidateUtils.objConfigValid(JobManagerOptions.JVM_OVERHEAD_MAX.key(),
-                MemorySize.ofMebiBytes(this.jvmOverheadMaxMemoryMb), dynamicProperties);
-        ConfigValidateUtils.objConfigValid(JobManagerOptions.JVM_OVERHEAD_MIN.key(),
-                MemorySize.ofMebiBytes(this.jvmOverheadMinMemoryMb), dynamicProperties);
-        ConfigValidateUtils.objConfigValid(JobManagerOptions.JVM_OVERHEAD_FRACTION.key(),
-                this.jvmOverheadFraction, dynamicProperties);
+        ConfigValidateUtils.memorySizeValid(JobManagerOptions.JVM_OVERHEAD_MAX,
+                this.jvmOverheadMaxMemoryMb, dynamicFlinkConf);
+        ConfigValidateUtils.memorySizeValid(JobManagerOptions.JVM_OVERHEAD_MIN,
+                this.jvmOverheadMinMemoryMb, dynamicFlinkConf);
+        ConfigValidateUtils.objConfigValid(JobManagerOptions.JVM_OVERHEAD_FRACTION,
+                this.jvmOverheadFraction, dynamicFlinkConf);
         // other
-        dynamicProperties.put(JobManagerOptions.EXECUTION_FAILOVER_STRATEGY.key(), this.failoverStrategy);
-        dynamicProperties.put(JobManagerOptions.PORT.key(), this.port);
-        ConfigValidateUtils.objConfigValid(JobManagerOptions.RPC_BIND_PORT.key(), this.rpcBindPort, dynamicProperties);
-        ConfigValidateUtils.stringConfigValid(JobManagerOptions.ADDRESS.key(), this.address, dynamicProperties);
-        dynamicProperties.put(JobManagerOptions.BIND_HOST.key(), this.bindHost);
+        dynamicFlinkConf.set(JobManagerOptions.EXECUTION_FAILOVER_STRATEGY, this.failoverStrategy);
+        dynamicFlinkConf.set(JobManagerOptions.PORT, this.port);
+        ConfigValidateUtils.objConfigValid(JobManagerOptions.RPC_BIND_PORT, this.rpcBindPort, dynamicFlinkConf);
+        ConfigValidateUtils.stringConfigValid(JobManagerOptions.ADDRESS.key(), this.address, dynamicFlinkConf);
+        dynamicFlinkConf.set(JobManagerOptions.BIND_HOST, this.bindHost);
 
     }
 }
