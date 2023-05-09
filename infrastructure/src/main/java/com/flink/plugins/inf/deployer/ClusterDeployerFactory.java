@@ -1,8 +1,10 @@
 package com.flink.plugins.inf.deployer;
 
 import com.flink.plugins.inf.config.RuntimeConfig;
-import com.flink.plugins.inf.config.YarnClusterDescriptorConfig;
+import com.flink.plugins.inf.config.kubernetes.KubernetesConfig;
+import com.flink.plugins.inf.config.yarn.YarnConfig;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.kubernetes.KubernetesClusterDescriptor;
 import org.apache.flink.yarn.YarnClusterDescriptor;
 
 /**
@@ -16,18 +18,35 @@ public class ClusterDeployerFactory {
     /**
      * 获取yarn集群描述符
      *
-     * @param yarnClusterDescriptorConfig yarn配置
-     * @param runtimeConfig               flink运行配置
+     * @param yarnConfig    yarn配置
+     * @param runtimeConfig flink运行配置
      * @return {@link YarnClusterDescriptor}
      */
-    public static YarnClusterDescriptor obtainYarnClusterDescriptor(YarnClusterDescriptorConfig
-                                                                            yarnClusterDescriptorConfig,
+    public static YarnClusterDescriptor obtainYarnClusterDescriptor(YarnConfig
+                                                                            yarnConfig,
                                                                     RuntimeConfig runtimeConfig) {
         YarnClusterDeployer yarnClusterDeployer = new YarnClusterDeployer();
         Configuration dynamicFlinkConf = new Configuration();
         buildDynamicFlinkConf(dynamicFlinkConf, runtimeConfig);
-        yarnClusterDescriptorConfig.setDynamicFlinkConf(dynamicFlinkConf);
-        return (YarnClusterDescriptor) yarnClusterDeployer.buildClusterDescriptor(yarnClusterDescriptorConfig);
+        yarnConfig.setDynamicFlinkConf(dynamicFlinkConf);
+        return (YarnClusterDescriptor) yarnClusterDeployer.buildClusterDescriptor(yarnConfig);
+    }
+
+    /**
+     * 获取k8s集群描述符
+     *
+     * @param kubernetesConfig k8s配置
+     * @param runtimeConfig    flink运行配置
+     * @return {@link KubernetesClusterDescriptor}
+     */
+    public static KubernetesClusterDescriptor obtainKubernetesClusterDescriptor(KubernetesConfig
+                                                                                  kubernetesConfig,
+                                                                          RuntimeConfig runtimeConfig) {
+        KubernetesClusterDeployer kubernetesClusterDeployer = new KubernetesClusterDeployer();
+        Configuration dynamicFlinkConf = new Configuration();
+        buildDynamicFlinkConf(dynamicFlinkConf, runtimeConfig);
+        kubernetesConfig.setDynamicFlinkConf(dynamicFlinkConf);
+        return (KubernetesClusterDescriptor) kubernetesClusterDeployer.buildClusterDescriptor(kubernetesConfig);
     }
 
     /**

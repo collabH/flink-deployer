@@ -9,7 +9,6 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.DeploymentOptions;
 
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @fileName: DeploymentConfig.java
