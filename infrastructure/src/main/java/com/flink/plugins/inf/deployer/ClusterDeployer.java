@@ -16,5 +16,5 @@ public interface ClusterDeployer<ClusterType, Config> {
      * @param clusterConfig clusterDescriptor所需配置
      * @return clusterDescriptor基础类
      */
-    abstract ClusterDescriptor<ClusterType> buildClusterDescriptor(Config clusterConfig);
+    ClusterDescriptor<ClusterType> buildClusterDescriptor(Config clusterConfig);
 }

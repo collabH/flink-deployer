@@ -16,6 +16,11 @@ import org.apache.flink.kubernetes.kubeclient.FlinkKubeClientFactory;
  * @date: 2023/4/28 11:04
  */
 public class KubernetesClusterDeployer implements ClusterDeployer<String, KubernetesConfig> {
+    /**
+     * 构建KubernetesClusterDescriptor
+     * @param clusterConfig clusterDescriptor所需配置
+     * @return {@link ClusterDescriptor<String>}
+     */
     @Override
     public ClusterDescriptor<String> buildClusterDescriptor(KubernetesConfig clusterConfig) {
         clusterConfig.validate();
